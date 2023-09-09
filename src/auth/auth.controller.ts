@@ -1,12 +1,21 @@
-import { Body, Controller, Get, Post, Req, Res } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Post,
+  Req,
+  Res,
+  UseGuards,
+} from '@nestjs/common';
 import { Request, Response } from 'express';
 import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
-import { TUser } from 'src/types/user.type';
+import { AuthGuard } from './auth.guard';
+import { TSessionPayload } from 'src/types/session-payload.type';
 
 declare module 'express-session' {
   interface SessionData {
-    user: TUser;
+    email: TSessionPayload;
   }
 }
 
@@ -32,13 +41,14 @@ export class AuthController {
     @Res() res: Response,
   ) {
     await this.authService.login(registerDto.email);
-    req.session.user = {
+    req.session.email = {
       email: registerDto.email,
-    } as TUser;
+    } as TSessionPayload;
     return res.status(200).send('Session set');
   }
 
   // guard middleware should be placed here!!
+  @UseGuards(AuthGuard)
   @Get('verify')
   async verify(@Req() req: Request, @Res() res: Response) {
     console.log(req.sessionID);
