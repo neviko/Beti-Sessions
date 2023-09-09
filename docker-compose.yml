@@ -1,0 +1,30 @@
+services:
+  # api:
+  #   build:
+  #     dockerfile: Dockerfile
+  #     context: .
+  #     # Only will build development stage from our dockerfile
+  #     target: development
+  #   volumes:
+  #     - .:/usr/src/app
+  #   env_file:
+  #     - .env
+  #   # Run a command against the development stage of the image
+  #   command: npm run start:dev
+  #   ports:
+  #     - 3000:3000
+  #   links:
+  #     - redis
+
+  redis:
+    image: redis:latest
+    restart: always
+    ports:
+      - '6379:6379'
+    volumes:
+      - /path/to/local/dаta:/root/redis
+      - /path/to/local/redis.conf:/usr/local/etc/redis/redis.conf
+    environment:
+      - REDIS_PASSWORD=my-password
+      - REDIS_PORT=6379
+      - REDIS_DATABASES=16
