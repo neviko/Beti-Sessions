@@ -1,4 +1,4 @@
-import { Body, Controller, Post, Req, Res } from '@nestjs/common';
+import { Body, Controller, Get, Post, Req, Res } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
@@ -12,7 +12,7 @@ declare module 'express-session' {
 
 @Controller('auth')
 export class AuthController {
-  //   constructor(private readonly authService: AuthService) {}
+  constructor(private readonly authService: AuthService) {}
 
   @Post('register')
   async register(
@@ -20,7 +20,7 @@ export class AuthController {
     @Req() req: Request,
     @Res() res: Response,
   ) {
-    // await this.authService.register(registerDto.email);
+    await this.authService.register(registerDto.email);
     res.status(201).send('Registration succeeded, user created');
   }
 
@@ -31,10 +31,17 @@ export class AuthController {
     @Req() req: Request,
     @Res() res: Response,
   ) {
-    // await this.authService.login(registerDto.email);
+    await this.authService.login(registerDto.email);
     req.session.user = {
       email: registerDto.email,
     } as TUser;
     return res.status(200).send('Session set');
+  }
+
+  // guard middleware should be placed here!!
+  @Get('verify')
+  async verify(@Req() req: Request, @Res() res: Response) {
+    console.log(req.sessionID);
+    res.send('s');
   }
 }
