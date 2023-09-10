@@ -15,13 +15,13 @@ The app includes the following:
 * Postman collection
 
 ## Installation
-
+* Clone the repo 
 * Edit the ".env example" file to -> ".env"
 
-run
-```bash
-$ docker-compose up --build
-```
+* run
+  ```bash
+  $ docker-compose up --build
+  ```
 
 ## Running the app
 
