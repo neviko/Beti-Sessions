@@ -15,7 +15,6 @@ export class AuthService {
 
   async register(email: string) {
     const user = await this.redisService.get(email);
-    console.log(`user is: ${user}`);
     if (user) {
       throw new BadRequestException('User already exists');
     }

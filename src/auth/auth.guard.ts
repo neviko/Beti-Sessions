@@ -1,4 +1,9 @@
-import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
+import {
+  CanActivate,
+  ExecutionContext,
+  Injectable,
+  Logger,
+} from '@nestjs/common';
 import { Request } from 'express';
 import { RedisStoreService } from 'src/redis-store/redis-store.service';
 import { TUser } from 'src/types/user.type';
@@ -23,25 +28,29 @@ export class AuthGuard implements CanActivate {
 
     const user: TUser = await this.redisService.get(sessionEmail);
     if (!user.isActive) {
+      Logger.log(
+        `user - ${user.email} have tried to access but he is in a cooldown period`,
+      );
       return false;
     }
 
-    const limitReached = isLimitReached(user.activityTimestamp, 1);
+    const limitReached = isLimitReached(user.activityTimestamp);
     if (!limitReached) {
       return true;
     }
 
-    // need to deactivate and fire a future event to activate it
     await this.redisService.set(sessionEmail, { ...user, isActive: false });
-    // fire event
-    this.queue.add(user, { delay: tenSeconds });
+    Logger.log(`user - ${user.email} have been deactivated`);
+
+    const delay = fiveMinutes;
+    this.queue.add(user, { delay });
+    Logger.log(
+      `future activation event sent for user - ${user.email}, will be consumed in: ${delay} MS`,
+    );
   }
 }
 
-const isLimitReached = (
-  activateTime: Date,
-  limitMinutes = oneHour,
-): boolean => {
+const isLimitReached = (activateTime: Date, limitMinutes = 60): boolean => {
   const now = new Date();
 
   const msDiff = now.getTime() - new Date(activateTime).getTime();

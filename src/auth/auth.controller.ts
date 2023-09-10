@@ -6,10 +6,11 @@ import {
   Req,
   Res,
   UseGuards,
+  Logger,
 } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { AuthService } from './auth.service';
-import { RegisterDto } from './dto/register.dto';
+import { RegisterDto as AuthDto } from './dto/register.dto';
 import { AuthGuard } from './auth.guard';
 import { ISessionPayload } from 'src/interfaces/session-payload.interface';
 
@@ -25,31 +26,42 @@ export class AuthController {
 
   @Post('register')
   async register(
-    @Body() registerDto: RegisterDto,
+    @Body() authDto: AuthDto,
     @Req() req: Request,
     @Res() res: Response,
   ) {
-    await this.authService.register(registerDto.email);
-    res.status(201).send('Registration succeeded, user created');
+    await this.authService.register(authDto.email);
+    Logger.log(`user - ${authDto.email} have been registered `);
+    res.status(201).send({
+      message: `Registration succeeded, user ${authDto.email} created`,
+    });
   }
 
   // add a guard who checks the activation status
   @Post('login')
   async login(
-    @Body() registerDto: RegisterDto,
+    @Body() authDto: AuthDto,
     @Req() req: Request,
     @Res() res: Response,
   ) {
-    await this.authService.login(registerDto.email);
+    await this.authService.login(authDto.email);
+    Logger.log(`user - ${authDto.email} have been logged in `);
+
     req.session.email = {
-      email: registerDto.email,
+      email: authDto.email,
     } as ISessionPayload;
-    return res.status(200).send('Session set');
+    return res.status(200).send({
+      message: `user - ${authDto.email} have been logged in successfully`,
+    });
   }
 
   @UseGuards(AuthGuard)
   @Get('verify')
   async verify(@Req() req: Request, @Res() res: Response) {
-    res.send({ message: 'OK' }).status(200);
+    Logger.log(`Access granted for ${req.session.email.email}`);
+
+    res
+      .send({ message: `Access granted for ${req.session.email.email}` })
+      .status(200);
   }
 }

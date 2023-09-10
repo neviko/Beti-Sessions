@@ -3,7 +3,6 @@ import { SessionConfigModule } from './session-config/session-config.module';
 import { CacheModule } from '@nestjs/cache-manager';
 import { redisStore } from 'cache-manager-redis-yet';
 import { AuthModule } from './auth/auth.module';
-import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
@@ -20,7 +19,7 @@ import { ConfigModule } from '@nestjs/config';
       }),
     }),
     AuthModule,
-    ConfigModule.forRoot(),
   ],
+  providers: [],
 })
 export class AppModule {}

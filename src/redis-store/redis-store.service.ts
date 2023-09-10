@@ -11,7 +11,6 @@ export class RedisStoreService {
 
   async get(key: string): Promise<any> {
     const cachedValue = await this.cacheManager.get(key);
-    console.log(cachedValue);
     return cachedValue;
   }
 }
