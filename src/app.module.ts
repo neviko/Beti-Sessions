@@ -6,6 +6,7 @@ import { CacheModule } from '@nestjs/cache-manager';
 import { redisStore } from 'cache-manager-redis-yet';
 import { RedisStoreService } from './redis-store/redis-store.service';
 import { AuthModule } from './auth/auth.module';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
@@ -15,13 +16,14 @@ import { AuthModule } from './auth/auth.module';
       useFactory: async () => ({
         store: await redisStore({
           socket: {
-            host: process.env.REDIS_HOST,
-            port: 6379,
+            host: process.env.REDIS_HOST || 'redis',
+            port: parseInt(process.env.REDIS_PORT) || 6379,
           },
         }),
       }),
     }),
     AuthModule,
+    ConfigModule.forRoot(),
   ],
   controllers: [AppController],
   providers: [AppService],

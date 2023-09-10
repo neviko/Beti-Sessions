@@ -24,6 +24,7 @@
     "@nestjs/bull": "^10.0.1",
     "@nestjs/cache-manager": "^2.1.0",
     "@nestjs/common": "^9.0.0",
+    "@nestjs/config": "^3.0.1",
     "@nestjs/core": "^9.0.0",
     "@nestjs/platform-express": "^9.0.0",
     "bull": "^4.11.3",

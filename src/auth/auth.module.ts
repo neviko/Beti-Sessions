@@ -9,15 +9,15 @@ import { ConsumerService } from 'src/bull-queue/consumer.service';
   imports: [
     BullModule.forRoot({
       redis: {
-        host: process.env.REDIS_HOST,
-        port: 6379,
+        host: process.env.REDIS_HOST || 'redis',
+        port: parseInt(process.env.REDIS_PORT) || 6379,
       },
     }),
     BullModule.registerQueue({
       name: 'activation-queue',
       redis: {
-        host: process.env.REDIS_HOST,
-        port: 6379,
+        host: process.env.REDIS_HOST || 'redis',
+        port: parseInt(process.env.REDIS_PORT) || 6379,
       },
     }),
   ],
