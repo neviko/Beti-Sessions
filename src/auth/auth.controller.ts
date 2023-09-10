@@ -47,11 +47,9 @@ export class AuthController {
     return res.status(200).send('Session set');
   }
 
-  // guard middleware should be placed here!!
   @UseGuards(AuthGuard)
   @Get('verify')
   async verify(@Req() req: Request, @Res() res: Response) {
-    console.log(req.sessionID);
-    res.send('s');
+    res.send({ message: 'OK' }).status(200);
   }
 }

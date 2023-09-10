@@ -36,6 +36,7 @@ export class AuthService {
     await this.redisService.set(email, {
       isActive: true,
       activityTimestamp: new Date(),
+      email,
     });
   }
 }
