@@ -9,15 +9,10 @@ import { RedisStoreService } from 'src/redis-store/redis-store.service';
 import { TUser } from 'src/types/user.type';
 import { Queue } from 'bull';
 import { InjectQueue } from '@nestjs/bull';
-import {
-  activationQueue,
-  fiveMinutes,
-  oneHour,
-  tenSeconds,
-} from 'src/constants/queue.constants';
+import { activationQueue, fiveMinutes } from 'src/constants/queue.constants';
 
 @Injectable()
-export class AuthGuard implements CanActivate {
+export class ActivityGuard implements CanActivate {
   constructor(
     private readonly redisService: RedisStoreService,
     @InjectQueue(activationQueue) private queue: Queue,

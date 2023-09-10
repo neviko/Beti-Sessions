@@ -11,7 +11,7 @@ import {
 import { Request, Response } from 'express';
 import { AuthService } from './auth.service';
 import { RegisterDto as AuthDto } from './dto/register.dto';
-import { AuthGuard } from './auth.guard';
+import { ActivityGuard } from '../guards/activity.guard';
 import { ISessionPayload } from 'src/interfaces/session-payload.interface';
 
 declare module 'express-session' {
@@ -55,7 +55,7 @@ export class AuthController {
     });
   }
 
-  @UseGuards(AuthGuard)
+  @UseGuards(ActivityGuard)
   @Get('verify')
   async verify(@Req() req: Request, @Res() res: Response) {
     Logger.log(`Access granted for ${req.session.email.email}`);
