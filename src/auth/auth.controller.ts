@@ -11,11 +11,11 @@ import { Request, Response } from 'express';
 import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
 import { AuthGuard } from './auth.guard';
-import { TSessionPayload } from 'src/types/session-payload.type';
+import { ISessionPayload } from 'src/interfaces/session-payload.interface';
 
 declare module 'express-session' {
   interface SessionData {
-    email: TSessionPayload;
+    email: ISessionPayload;
   }
 }
 
@@ -43,7 +43,7 @@ export class AuthController {
     await this.authService.login(registerDto.email);
     req.session.email = {
       email: registerDto.email,
-    } as TSessionPayload;
+    } as ISessionPayload;
     return res.status(200).send('Session set');
   }
 

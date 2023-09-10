@@ -8,6 +8,7 @@ import {
   activationQueue,
   fiveMinutes,
   oneHour,
+  tenSeconds,
 } from 'src/constants/queue.constants';
 
 @Injectable()
@@ -25,7 +26,7 @@ export class AuthGuard implements CanActivate {
       return false;
     }
 
-    const limitReached = isLimitReached(user.activityTimestamp);
+    const limitReached = isLimitReached(user.activityTimestamp, 1);
     if (!limitReached) {
       return true;
     }
@@ -33,7 +34,7 @@ export class AuthGuard implements CanActivate {
     // need to deactivate and fire a future event to activate it
     await this.redisService.set(sessionEmail, { ...user, isActive: false });
     // fire event
-    this.queue.add(user, { delay: fiveMinutes });
+    this.queue.add(user, { delay: tenSeconds });
   }
 }
 
