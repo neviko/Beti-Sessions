@@ -4,7 +4,11 @@ import { RedisStoreService } from 'src/redis-store/redis-store.service';
 import { TUser } from 'src/types/user.type';
 import { Queue } from 'bull';
 import { InjectQueue } from '@nestjs/bull';
-import { activationQueue, oneHour } from 'src/constants/queue.constants';
+import {
+  activationQueue,
+  fiveMinutes,
+  oneHour,
+} from 'src/constants/queue.constants';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -21,7 +25,7 @@ export class AuthGuard implements CanActivate {
       return false;
     }
 
-    const limitReached = isLimitReached(user.activityTimestamp, 1);
+    const limitReached = isLimitReached(user.activityTimestamp);
     if (!limitReached) {
       return true;
     }
@@ -29,14 +33,17 @@ export class AuthGuard implements CanActivate {
     // need to deactivate and fire a future event to activate it
     await this.redisService.set(sessionEmail, { ...user, isActive: false });
     // fire event
-    this.queue.add(user, { delay: 10000 });
+    this.queue.add(user, { delay: fiveMinutes });
   }
 }
 
-const isLimitReached = (activateTime: Date, limitMin = 60): boolean => {
+const isLimitReached = (
+  activateTime: Date,
+  limitMinutes = oneHour,
+): boolean => {
   const now = new Date();
 
   const msDiff = now.getTime() - new Date(activateTime).getTime();
   const minDiff = msDiff / 1000 / 60;
-  return minDiff > limitMin;
+  return minDiff > limitMinutes;
 };
