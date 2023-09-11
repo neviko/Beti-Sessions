@@ -15,7 +15,7 @@ import Redis from 'ioredis';
             port: 6379, // Redis server port
           }),
         }),
-        secret: 'your-secret-key', // Replace with your own secret key
+        secret: process.env.SESSION_SECRET, // Replace with your own secret key
         resave: false,
         saveUninitialized: false,
         cookie: {
